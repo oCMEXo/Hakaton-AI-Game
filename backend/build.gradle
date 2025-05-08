@@ -45,7 +45,7 @@ tasks.named('test') {
 openApiGenerate {
 	generatorName = "spring"
 	configFile = "${layout.projectDirectory.asFile.path}/config/open_api_config.json"
-	inputSpec = "${layout.projectDirectory.asFile.path}/meeting_manager_api.yaml"
+	inputSpec = "${layout.projectDirectory.asFile.path}/mnemosai_api.json"
 	outputDir = layout.buildDirectory.dir("generated").get().asFile.path
 	apiPackage = "com.mnemosai"
 	modelPackage = "com.mnemosai.model.dto"
