@@ -1,0 +1,262 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "MnemosAI REST API",
+    "description": "API for interacting with Mnemos AI. There are three types of entities: Dialogues (user requests to explain some topic), Headers (subtopics of the topic) and Contents (content of the subtopic)",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local server for testing"
+    }
+  ],
+  "paths": {
+    "/dialogue": {
+      "get": {
+        "tags": [
+          "Dialogue"
+        ],
+        "summary": "Get dialogs",
+        "description": "Get a list of dialogs. Specify parameters for pagination",
+        "operationId": "getDialogs",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number (starting from 0)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of dialogs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DialogueDTO"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request parameters are invalid"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Dialogue"
+        ],
+        "summary": "Create a new dialog",
+        "operationId": "createDialog",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "description": "Dialogue topic, provided by user",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dialogue created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DialogueDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request body is invalid"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/header/{dialogueId}": {
+      "get": {
+        "tags": [
+          "Header"
+        ],
+        "summary": "Get headers",
+        "description": "Get a list of headers by dialogue id",
+        "operationId": "getHeaders",
+        "parameters": [
+          {
+            "name": "dialogueId",
+            "in": "path",
+            "description": "Id of the dialogue to get headers for",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of headers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HeaderDTO"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request parameters are invalid"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/content/{headerId}": {
+      "get": {
+        "tags": [
+          "Content"
+        ],
+        "summary": "Get content",
+        "description": "Get content by header id",
+        "operationId": "getContent",
+        "parameters": [
+          {
+            "name": "headerId",
+            "in": "path",
+            "description": "Id of the header to get content for",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Header retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request parameters are invalid"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DialogueDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/id"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the dialog, represents the topic of the dialog",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "HeaderDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/id"
+          },
+          "dialogue_id": {
+            "$ref": "#/components/schemas/id"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the header, means the header itself",
+            "minLength": 1
+          },
+          "orderNumber": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "dialogue_id",
+          "title",
+          "orderNumber"
+        ]
+      },
+      "ContentDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/id"
+          },
+          "header_id": {
+            "$ref": "#/components/schemas/id"
+          },
+          "content": {
+            "type": "string",
+            "description": "Content of the header",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "header_id",
+          "content"
+        ]
+      },
+      "id": {
+        "type": "integer",
+        "format": "int64"
+      }
+    }
+  }
+}
