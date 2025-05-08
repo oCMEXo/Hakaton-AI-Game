@@ -10,9 +10,12 @@ import java.util.List;
 @Service
 public class DialogueService {
     private final DialogueRepository dialogueRepository;
+    private final GeminiProviderService geminiService;
 
-    public DialogueService(DialogueRepository dialogueRepository) {
+    public DialogueService(DialogueRepository dialogueRepository,
+                           GeminiProviderService geminiService) {
         this.dialogueRepository = dialogueRepository;
+        this.geminiService = geminiService;
     }
 
     public List<DialogueDTO> getDialogs(Integer page, Integer size) {
@@ -33,6 +36,12 @@ public class DialogueService {
         entity.setName(name);
 
         entity = dialogueRepository.save(entity);
+
+        geminiService.sendRequest(String.format("I want to learn %s. You are an expert in this field." +
+                "Create a bullet points list of the most important topics in order of studying them" +
+                "with increasing complexity and difficulty." +
+                "Provide an answer in English, without any additional details." +
+                "Response should only contain a list.", name));
 
         DialogueDTO dto = new DialogueDTO();
         dto.setId(entity.getId());
