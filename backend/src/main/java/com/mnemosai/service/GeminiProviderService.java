@@ -41,6 +41,7 @@ public class GeminiProviderService {
             String responseBody = response.body();
 
             System.out.println("Status Code: " + response.statusCode());
+            System.out.println("Response Body: " + responseBody);
 
             JSONObject json = new JSONObject(responseBody);
             JSONArray candidates = json.getJSONArray("candidates");

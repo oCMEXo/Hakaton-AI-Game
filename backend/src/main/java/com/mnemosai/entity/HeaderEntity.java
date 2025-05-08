@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class HeaderEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "dialogue_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "dialogue_id", nullable = false)
     private DialogueEntity dialogue;
 
     @Column(name = "title")
@@ -37,6 +38,6 @@ public class HeaderEntity {
     @Column(name = "number")
     private int number;
 
-    @OneToMany(mappedBy = "header", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ContentEntity> contents;
+    @OneToOne(mappedBy = "header", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ContentEntity contents;
 }
