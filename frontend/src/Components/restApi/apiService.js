@@ -1,6 +1,8 @@
 // apiService.js
 
-const BASE_URL = "http://localhost:8080";
+import CONFIG from "../../../configSettings.js";
+
+const BASE_URL = CONFIG;
 
 /**
  * Выполняет HTTP запрос.
