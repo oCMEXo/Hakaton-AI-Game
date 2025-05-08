@@ -1,0 +1,58 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.3'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id "org.openapi.generator" version "7.11.0"
+}
+
+group = 'com.mnemosai'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(23)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '3.4.3'
+	implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.29.0'
+	implementation group: 'io.github.cdimascio', name: 'java-dotenv', version: '5.2.2'
+	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.8.5'
+	implementation "org.postgresql:postgresql:42.7.2"
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+openApiGenerate {
+	generatorName = "spring"
+	configFile = "${layout.projectDirectory.asFile.path}/config/open_api_config.json"
+	inputSpec = "${layout.projectDirectory.asFile.path}/meeting_manager_api.yaml"
+	outputDir = layout.buildDirectory.dir("generated").get().asFile.path
+	apiPackage = "com.mnemosai"
+	modelPackage = "com.mnemosai.model.dto"
+}
+
+tasks.compileJava {
+	dependsOn tasks.openApiGenerate
+}
+
+sourceSets.main.java.srcDirs += ["${layout.buildDirectory.dir("generated").map { it.asFile.path }.get()}/src/main/java"]

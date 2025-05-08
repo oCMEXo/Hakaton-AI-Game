@@ -1,0 +1,8 @@
+{
+  "library": "spring-boot",
+  "interfaceOnly": true,
+  "useSpringBoot3": true,
+  "useResponseEntity": false,
+  "openApiNullable": false,
+  "useSwaggerUI": true
+}
